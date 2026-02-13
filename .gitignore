@@ -1,0 +1,15 @@
+# Ignore browser artifacts
+*.webp
+.DS_Store
+Thumbs.db
+
+# Ignore editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Ignore OS files
+.DS_Store
+desktop.ini

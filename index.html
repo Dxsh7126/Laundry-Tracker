@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#4F46E5">
+    <!-- iOS PWA Support -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Laundry">
+    <meta name="description" content="Track your laundry items and manage your package weight efficiently">
+    <title>Laundry Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="app-title">🧺 Laundry Tracker</h1>
+                <div class="package-summary">
+                    <div class="weight-display">
+                        <span class="weight-value" id="remainingWeight">45</span>
+                        <span class="weight-total">/ 90 kg</span>
+                    </div>
+                    <div class="expiration-badge" id="expirationBadge">
+                        <span class="expiration-icon">⏰</span>
+                        <span id="expirationText">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Stats Dashboard -->
+        <section class="stats-dashboard">
+            <div class="stat-card">
+                <div class="stat-icon">👕</div>
+                <div class="stat-info">
+                    <div class="stat-value" id="itemsInLaundry">0</div>
+                    <div class="stat-label">In Laundry</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🏠</div>
+                <div class="stat-info">
+                    <div class="stat-value" id="itemsInCupboard">0</div>
+                    <div class="stat-label">In Cupboard</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⚖️</div>
+                <div class="stat-info">
+                    <div class="stat-value" id="weightUsed">0</div>
+                    <div class="stat-label">kg Used</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📦</div>
+                <div class="stat-info">
+                    <div class="stat-value" id="loadsRemaining">0</div>
+                    <div class="stat-label">Loads Left</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Submit Laundry Section -->
+        <section class="submit-laundry-section">
+            <div class="section-header">
+                <h2 class="section-title">Submit Laundry</h2>
+            </div>
+            <div class="submit-laundry-card">
+                <form class="submit-form" id="submitLaundryForm">
+                    <div class="form-row">
+                        <input type="date" id="laundryDate" class="input-field" required>
+                        <input type="number" id="laundryWeight" class="input-field" placeholder="Weight (kg)" min="0.1"
+                            step="0.1" required>
+                        <button type="submit" class="btn-primary">
+                            <span class="btn-text">Submit</span>
+                            <span class="btn-icon">📦</span>
+                        </button>
+                    </div>
+                </form>
+                <button class="history-toggle" id="historyToggle">
+                    <span>📋 View History</span>
+                    <span class="toggle-icon">▼</span>
+                </button>
+                <div class="history-container" id="historyContainer" style="display: none;">
+                    <div class="history-list" id="historyList">
+                        <div class="empty-state">
+                            <div class="empty-icon">📭</div>
+                            <p class="empty-text">No laundry history yet</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Add Item Form -->
+        <section class="add-item-section">
+            <div class="section-header">
+                <h2 class="section-title">Add New Item</h2>
+                <button class="btn-icon" id="settingsBtn" title="Settings">⚙️</button>
+            </div>
+            <form class="add-item-form" id="addItemForm">
+                <div class="image-upload-section" id="imageUploadSection">
+                    <button type="button" class="image-upload-btn" id="imageUploadBtn">
+                        <span class="camera-icon">📷</span>
+                        <span class="upload-text">Add Photo</span>
+                    </button>
+                    <input type="file" id="itemImage" accept="image/*" capture="environment" style="display: none;">
+                    <div class="image-preview" id="imagePreview" style="display: none;">
+                        <img id="previewImg" src="" alt="Preview">
+                        <button type="button" class="remove-image-btn" id="removeImageBtn">✕</button>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <input type="text" id="itemName" class="input-field" placeholder="Item name (e.g., Jeans, T-shirt)"
+                        required autocomplete="off">
+                    <select id="itemStatus" class="input-field">
+                        <option value="cupboard">In Cupboard</option>
+                        <option value="laundry">In Laundry</option>
+                    </select>
+                    <button type="submit" class="btn-primary">
+                        <span class="btn-text">Add Item</span>
+                        <span class="btn-icon">+</span>
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Items List -->
+        <section class="items-section">
+            <div class="section-header">
+                <h2 class="section-title">Your Items</h2>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="laundry">Laundry</button>
+                    <button class="filter-btn" data-filter="cupboard">Cupboard</button>
+                </div>
+            </div>
+            <div class="items-list" id="itemsList">
+                <div class="empty-state">
+                    <div class="empty-icon">📭</div>
+                    <p class="empty-text">No items yet. Add your first clothing item above!</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Settings</h3>
+                <button class="btn-close" id="closeSettings">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-group">
+                    <label class="setting-label">Package Weight (kg)</label>
+                    <input type="number" id="settingTotalWeight" class="input-field" value="90" min="1">
+                </div>
+                <div class="setting-group">
+                    <label class="setting-label">Current Remaining (kg)</label>
+                    <input type="number" id="settingCurrentWeight" class="input-field" value="45" min="0" step="0.1">
+                </div>
+                <div class="setting-group">
+                    <label class="setting-label">Expiration Date</label>
+                    <input type="date" id="settingExpirationDate" class="input-field">
+                </div>
+                <div class="setting-group">
+                    <label class="setting-label">Min Load Weight (kg)</label>
+                    <input type="number" id="settingMinLoad" class="input-field" value="2" min="0.5" step="0.5">
+                </div>
+                <div class="setting-group">
+                    <label class="setting-label">Max Load Weight (kg)</label>
+                    <input type="number" id="settingMaxLoad" class="input-field" value="10" min="1">
+                </div>
+                <div class="setting-actions">
+                    <button class="btn-secondary" id="exportData">Export Data</button>
+                    <button class="btn-secondary" id="importData">Import Data</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" id="saveSettings">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Item Modal -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Item</h3>
+                <button class="btn-close" id="closeEdit">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-group">
+                    <label class="setting-label">Item Photo</label>
+                    <div class="edit-image-section">
+                        <button type="button" class="image-upload-btn" id="editImageUploadBtn">
+                            <span class="camera-icon">📷</span>
+                            <span class="upload-text">Change Photo</span>
+                        </button>
+                        <input type="file" id="editItemImage" accept="image/*" capture="environment"
+                            style="display: none;">
+                        <div class="image-preview" id="editImagePreview" style="display: none;">
+                            <img id="editPreviewImg" src="" alt="Preview">
+                            <button type="button" class="remove-image-btn" id="editRemoveImageBtn">✕</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="setting-group">
+                    <label class="setting-label">Item Name</label>
+                    <input type="text" id="editItemName" class="input-field">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelEdit">Cancel</button>
+                <button class="btn-primary" id="saveEdit">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <input type="file" id="fileInput" accept=".json" style="display: none;">
+
+    <script src="app.js"></script>
+</body>
+
+</html>
