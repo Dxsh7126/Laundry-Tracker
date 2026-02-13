@@ -78,15 +78,13 @@
             </div>
             <div class="submit-laundry-card">
                 <form class="submit-form" id="submitLaundryForm">
-                    <div class="form-row">
-                        <input type="date" id="laundryDate" class="input-field" required>
-                        <input type="number" id="laundryWeight" class="input-field" placeholder="Weight (kg)" min="0.1"
-                            step="0.1" required>
-                        <button type="submit" class="btn-primary">
-                            <span class="btn-text">Submit</span>
-                            <span class="btn-icon">📦</span>
-                        </button>
-                    </div>
+                    <input type="date" id="laundryDate" class="input-field" required>
+                    <input type="number" id="laundryWeight" class="input-field" placeholder="Weight (kg)" min="0.1"
+                        step="0.1" required>
+                    <button type="submit" class="btn-primary submit-btn">
+                        <span class="btn-text">Submit Laundry</span>
+                        <span class="btn-icon">📦</span>
+                    </button>
                 </form>
                 <button class="history-toggle" id="historyToggle">
                     <span>📋 View History</span>
@@ -121,18 +119,16 @@
                         <button type="button" class="remove-image-btn" id="removeImageBtn">✕</button>
                     </div>
                 </div>
-                <div class="form-row">
-                    <input type="text" id="itemName" class="input-field" placeholder="Item name (e.g., Jeans, T-shirt)"
-                        required autocomplete="off">
-                    <select id="itemStatus" class="input-field">
-                        <option value="cupboard">In Cupboard</option>
-                        <option value="laundry">In Laundry</option>
-                    </select>
-                    <button type="submit" class="btn-primary">
-                        <span class="btn-text">Add Item</span>
-                        <span class="btn-icon">+</span>
-                    </button>
-                </div>
+                <input type="text" id="itemName" class="input-field" placeholder="Item name (e.g., Jeans, T-shirt)"
+                    required autocomplete="off">
+                <select id="itemStatus" class="input-field">
+                    <option value="cupboard">In Cupboard</option>
+                    <option value="laundry">In Laundry</option>
+                </select>
+                <button type="submit" class="btn-primary add-item-btn">
+                    <span class="btn-text">Add Item</span>
+                    <span class="btn-icon">+</span>
+                </button>
             </form>
         </section>
 
