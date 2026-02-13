@@ -320,27 +320,56 @@ class LaundryTracker {
             return;
         }
 
-        // Validate file size (max 5MB)
-        if (file.size > 5 * 1024 * 1024) {
-            alert('Image must be less than 5MB');
-            return;
-        }
-
+        // Process and compress image automatically
         const reader = new FileReader();
         reader.onload = (e) => {
-            const imageData = e.target.result;
+            const img = new Image();
+            img.onload = () => {
+                // Create canvas for compression
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
 
-            if (context === 'add') {
-                this.currentImage = imageData;
-                document.getElementById('previewImg').src = imageData;
-                document.getElementById('imagePreview').style.display = 'block';
-                document.getElementById('imageUploadBtn').style.display = 'none';
-            } else if (context === 'edit') {
-                this.editImage = imageData;
-                document.getElementById('editPreviewImg').src = imageData;
-                document.getElementById('editImagePreview').style.display = 'block';
-                document.getElementById('editImageUploadBtn').style.display = 'none';
-            }
+                // Calculate new dimensions (max 800x800 while maintaining aspect ratio)
+                let width = img.width;
+                let height = img.height;
+                const maxSize = 800;
+
+                if (width > height && width > maxSize) {
+                    height = (height * maxSize) / width;
+                    width = maxSize;
+                } else if (height > maxSize) {
+                    width = (width * maxSize) / height;
+                    height = maxSize;
+                }
+
+                // Set canvas size and draw image
+                canvas.width = width;
+                canvas.height = height;
+                ctx.drawImage(img, 0, 0, width, height);
+
+                // Convert to compressed base64 (JPEG with 0.85 quality)
+                const compressedImage = canvas.toDataURL('image/jpeg', 0.85);
+
+                // Check final size (rough estimate: base64 is ~1.37x actual size)
+                const sizeInMB = (compressedImage.length * 0.75) / (1024 * 1024);
+
+                // If still too large, compress more aggressively
+                const finalImage = sizeInMB > 5 ? canvas.toDataURL('image/jpeg', 0.7) : compressedImage;
+
+                // Set the image data
+                if (context === 'add') {
+                    this.currentImage = finalImage;
+                    document.getElementById('previewImg').src = finalImage;
+                    document.getElementById('imagePreview').style.display = 'block';
+                    document.getElementById('imageUploadBtn').style.display = 'none';
+                } else if (context === 'edit') {
+                    this.editImage = finalImage;
+                    document.getElementById('editPreviewImg').src = finalImage;
+                    document.getElementById('editImagePreview').style.display = 'block';
+                    document.getElementById('editImageUploadBtn').style.display = 'none';
+                }
+            };
+            img.src = e.target.result;
         };
         reader.readAsDataURL(file);
     }
